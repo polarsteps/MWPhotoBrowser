@@ -60,6 +60,7 @@
 // Icon should be located in the app's main bundle
 @property (nonatomic, strong) NSString *customImageSelectedIconName;
 @property (nonatomic, strong) NSString *customImageSelectedSmallIconName;
+@property (nonatomic, strong) NSString *customDoneButtonTitle;
 
 // Init
 - (id)initWithPhotos:(NSArray *)photosArray;
