@@ -1077,16 +1077,20 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 	// Title
     NSUInteger numberOfPhotos = [self numberOfPhotos];
     if (_gridController) {
-        if (_gridController.selectionMode) {
-            self.title = NSLocalizedString(@"Select Photos", nil);
+        if ([_delegate respondsToSelector:@selector(gridTitleForPhotoBrowser:)]) {
+            self.title = [_delegate gridTitleForPhotoBrowser:self];
         } else {
-            NSString *photosText;
-            if (numberOfPhotos == 1) {
-                photosText = NSLocalizedString(@"photo", @"Used in the context: '1 photo'");
+            if (_gridController.selectionMode) {
+                self.title = NSLocalizedString(@"Select Photos", nil);
             } else {
-                photosText = NSLocalizedString(@"photos", @"Used in the context: '3 photos'");
+                NSString *photosText;
+                if (numberOfPhotos == 1) {
+                    photosText = NSLocalizedString(@"photo", @"Used in the context: '1 photo'");
+                } else {
+                    photosText = NSLocalizedString(@"photos", @"Used in the context: '3 photos'");
+                }
+                self.title = [NSString stringWithFormat:@"%lu %@", (unsigned long)numberOfPhotos, photosText];
             }
-            self.title = [NSString stringWithFormat:@"%lu %@", (unsigned long)numberOfPhotos, photosText];
         }
     } else if (numberOfPhotos > 1) {
         if ([_delegate respondsToSelector:@selector(photoBrowser:titleForPhotoAtIndex:)]) {
@@ -1332,7 +1336,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 - (void)hideGrid {
     
-    if (!_gridController) return;
+    if (!_gridController || _customActionOnThumbnailSelection) return;
     
     // Remember previous content offset
     _currentGridContentOffset = _gridController.collectionView.contentOffset;
