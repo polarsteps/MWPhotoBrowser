@@ -73,6 +73,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _enableGrid = YES;
     _startOnGrid = NO;
     _enableSwipeToDismiss = YES;
+    _customActionOnThumbnailSelection = NO;
     _delayToHideElements = 5;
     _visiblePages = [[NSMutableSet alloc] init];
     _recycledPages = [[NSMutableSet alloc] init];
@@ -1516,11 +1517,15 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         if (index >= photoCount)
             index = [self numberOfPhotos]-1;
     }
-    _currentPageIndex = index;
-	if ([self isViewLoaded]) {
-        [self jumpToPageAtIndex:index animated:NO];
-        if (!_viewIsActive)
-            [self tilePages]; // Force tiling if view is not visible
+    if (_enableGrid && _customActionOnThumbnailSelection && _delegate) {
+        [_delegate photoBrowser:self didSelectThumbAtIndex:index];
+    } else {
+        _currentPageIndex = index;
+        if ([self isViewLoaded]) {
+            [self jumpToPageAtIndex:index animated:NO];
+            if (!_viewIsActive)
+                [self tilePages]; // Force tiling if view is not visible
+        }
     }
 }
 
